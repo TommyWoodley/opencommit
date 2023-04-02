@@ -107,6 +107,7 @@ export const generateCommitMessageWithChatCompletion = async (
       if (!commitMessage)
         return { error: GenerateCommitMessageErrorEnum.emptyMessage };
 
+      commitMessage.replace(/\(.*?\)/, '')
       return commitMessage;
     }
   } catch (error) {
