@@ -18,7 +18,7 @@ const INIT_MESSAGES_PROMPT: Array<ChatCompletionRequestMessage> = [
     content: `You are to act as the author of a commit message in git. Your mission is to create clean and comprehensive commit messages in the conventional commit convention and explain why a change was done. I'll send you an output of 'git diff --staged' command, and you convert it into a commit message.
 'Use GitMoji convention to preface the commit.': 'Do not preface the commit with anything.
 'Add a short description of WHY the changes are done after the commit message. Don\'t start it with "This commit", just describe the changes.
-Use the present tense. Lines must not be longer than 74 characters. Use ${translation.localLanguage} to answer. You must use as few lines as possible. You must order lines starting with the most important. You do not need to mention the file names where changes have taken place`
+Use the present tense. Lines must not be longer than 74 characters. Use ${translation.localLanguage} to answer. You should start your message with an overall description of the changes. You must order lines starting with the most important. You do not need to mention the file names where changes have taken place`
   },
   {
     role: ChatCompletionRequestMessageRoleEnum.User,
