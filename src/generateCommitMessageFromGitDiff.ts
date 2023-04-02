@@ -95,7 +95,7 @@ export const generateCommitMessageWithChatCompletion = async (
 
       const commitMessages = await Promise.all(commitMessagePromises);
 
-      return commitMessages.join('\n\n');
+      return commitMessages.join('\n\n').replace(/\(.*?\)/, '');
     } else {
       const messages = generateCommitMessageChatCompletionPrompt(diff);
 
