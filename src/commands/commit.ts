@@ -222,5 +222,8 @@ export async function commit(
 
 export async function copyMessageToClipboard(
 ) {
+  const changedFiles = await getChangedFiles();
+
+  if (changedFiles) await gitAdd({files: changedFiles});
 
 }
