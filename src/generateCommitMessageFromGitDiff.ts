@@ -1,12 +1,9 @@
-import {
-  ChatCompletionRequestMessage,
-  ChatCompletionRequestMessageRoleEnum
-} from 'openai';
-import { api } from './api';
-import { getConfig } from './commands/config';
-import { mergeDiffs } from './utils/mergeDiffs';
-import { i18n, I18nLocals } from './i18n';
-import { tokenCount } from './utils/tokenCount';
+import {ChatCompletionRequestMessage, ChatCompletionRequestMessageRoleEnum} from 'openai';
+import {api} from './api';
+import {getConfig} from './commands/config';
+import {mergeDiffs} from './utils/mergeDiffs';
+import {i18n, I18nLocals} from './i18n';
+import {tokenCount} from './utils/tokenCount';
 
 const config = getConfig();
 const translation = i18n[(config?.language as I18nLocals) || 'en'];
@@ -107,8 +104,7 @@ export const generateCommitMessageWithChatCompletion = async (
       if (!commitMessage)
         return { error: GenerateCommitMessageErrorEnum.emptyMessage };
 
-      commitMessage.replace(/\(.*?\)/, '')
-      return commitMessage;
+      return commitMessage.replace(/\(.*?\)/, '');
     }
   } catch (error) {
     return { error: GenerateCommitMessageErrorEnum.internalError };

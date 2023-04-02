@@ -136,8 +136,8 @@ ${chalk.grey('——————————————————')}`
 };
 
 export async function commit(
-  extraArgs: string[] = [],
-  isStageAllFlag: Boolean = false
+    extraArgs: string[] = [],
+    isStageAllFlag: Boolean = false
 ) {
   if (isStageAllFlag) {
     const changedFiles = await getChangedFiles();
@@ -174,8 +174,8 @@ export async function commit(
     });
 
     if (
-      isStageAllAndCommitConfirmedByUser &&
-      !isCancel(isStageAllAndCommitConfirmedByUser)
+        isStageAllAndCommitConfirmedByUser &&
+        !isCancel(isStageAllAndCommitConfirmedByUser)
     ) {
       await commit(extraArgs, true);
       process.exit(1);
@@ -200,16 +200,16 @@ export async function commit(
   }
 
   stagedFilesSpinner.stop(
-    `${stagedFiles.length} staged files:\n${stagedFiles
-      .map((file) => `  ${file}`)
-      .join('\n')}`
+      `${stagedFiles.length} staged files:\n${stagedFiles
+          .map((file) => `  ${file}`)
+          .join('\n')}`
   );
 
   const [, generateCommitError] = await trytm(
-    generateCommitMessageFromGitDiff(
-      await getDiff({ files: stagedFiles }),
-      extraArgs
-    )
+      generateCommitMessageFromGitDiff(
+          await getDiff({ files: stagedFiles }),
+          extraArgs
+      )
   );
 
   if (generateCommitError) {
@@ -218,4 +218,9 @@ export async function commit(
   }
 
   process.exit(0);
+}
+
+export async function copyMessageToClipboard(
+) {
+
 }
