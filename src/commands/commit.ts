@@ -1,4 +1,3 @@
-import { execa } from 'execa';
 import {
   GenerateCommitMessageErrorEnum,
   generateCommitMessageWithChatCompletion
@@ -16,25 +15,15 @@ import {
   outro,
   isCancel,
   intro,
-  multiselect,
-  select
+  multiselect
 } from '@clack/prompts';
 import chalk from 'chalk';
 import { trytm } from '../utils/trytm';
 
-const getGitRemotes = async () => {
-  const { stdout } = await execa('git', ['remote']);
-  return stdout.split('\n').filter((remote) => Boolean(remote.trim()));
-};
-
 const generateCommitMessageFromGitDiff = async (
-  diff: string,
-  extraArgs: string[]
+  diff: string
 ): Promise<void> => {
   await assertGitRepo();
-
-  const commitSpinner = spinner();
-  commitSpinner.start('Generating the commit message');
   const commitMessage = await generateCommitMessageWithChatCompletion(diff);
 
   // TODO: show proper error messages
@@ -52,8 +41,6 @@ const generateCommitMessageFromGitDiff = async (
     process.exit(1);
   }
 
-  commitSpinner.stop('📝 Commit message generated');
-
   outro(
     `Commit message:
 ${chalk.grey('——————————————————')}
@@ -61,78 +48,7 @@ ${commitMessage}
 ${chalk.grey('——————————————————')}`
   );
 
-  const isCommitConfirmedByUser = await confirm({
-    message: 'Confirm the commit message?'
-  });
-
-  if (isCommitConfirmedByUser && !isCancel(isCommitConfirmedByUser)) {
-    const { stdout } = await execa('git', [
-      'commit',
-      '-m',
-      commitMessage,
-      ...extraArgs
-    ]);
-
-    outro(`${chalk.green('✔')} successfully committed`);
-
-    outro(stdout);
-
-    const remotes = await getGitRemotes();
-
-    if (!remotes.length) {
-      const { stdout } = await execa('git', ['push']);
-      if (stdout) outro(stdout);
-      process.exit(0);
-    }
-
-    if (remotes.length === 1) {
-      const isPushConfirmedByUser = await confirm({
-        message: 'Do you want to run `git push`?'
-      });
-
-      if (isPushConfirmedByUser && !isCancel(isPushConfirmedByUser)) {
-        const pushSpinner = spinner();
-
-        pushSpinner.start(`Running \`git push ${remotes[0]}\``);
-
-        const { stdout } = await execa('git', [
-          'push',
-          '--verbose',
-          remotes[0]
-        ]);
-
-        pushSpinner.stop(
-          `${chalk.green('✔')} successfully pushed all commits to ${remotes[0]}`
-        );
-
-        if (stdout) outro(stdout);
-      } else {
-        outro('`git push` aborted');
-        process.exit(0);
-      }
-    } else {
-      const selectedRemote = (await select({
-        message: 'Choose a remote to push to',
-        options: remotes.map((remote) => ({ value: remote, label: remote }))
-      })) as string;
-
-      if (!isCancel(selectedRemote)) {
-        const pushSpinner = spinner();
-
-        pushSpinner.start(`Running \`git push ${selectedRemote}\``);
-
-        const { stdout } = await execa('git', ['push', selectedRemote]);
-
-        pushSpinner.stop(
-          `${chalk.green(
-            '✔'
-          )} successfully pushed all commits to ${selectedRemote}`
-        );
-
-        if (stdout) outro(stdout);
-      } else outro(`${chalk.gray('✖')} process cancelled`);
-    }
-  }
+  //here
 };
 
 export async function commit(
@@ -207,8 +123,7 @@ export async function commit(
 
   const [, generateCommitError] = await trytm(
       generateCommitMessageFromGitDiff(
-          await getDiff({ files: stagedFiles }),
-          extraArgs
+          await getDiff({ files: stagedFiles })
       )
   );
 
@@ -235,8 +150,7 @@ export async function copyMessageToClipboard(
 
   const [, generateCommitError] = await trytm(
       generateCommitMessageFromGitDiff(
-          await getDiff({ files: stagedFiles }),
-          []
+          await getDiff({ files: stagedFiles })
       )
   );
 
@@ -246,5 +160,4 @@ export async function copyMessageToClipboard(
   }
 
   process.exit(0);
-
 }
