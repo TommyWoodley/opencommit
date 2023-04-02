@@ -226,4 +226,25 @@ export async function copyMessageToClipboard(
 
   if (changedFiles) await gitAdd({files: changedFiles});
 
+  const [stagedFiles, errorStagedFiles] = await trytm(getStagedFiles());
+
+  if (errorStagedFiles) {
+    outro(`${chalk.red('✖')} ${errorStagedFiles}`);
+    process.exit(1);
+  }
+
+  const [, generateCommitError] = await trytm(
+      generateCommitMessageFromGitDiff(
+          await getDiff({ files: stagedFiles }),
+          []
+      )
+  );
+
+  if (generateCommitError) {
+    outro(`${chalk.red('✖')} ${generateCommitError}`);
+    process.exit(1);
+  }
+
+  process.exit(0);
+
 }
