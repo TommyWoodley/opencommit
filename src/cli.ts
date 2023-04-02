@@ -6,7 +6,7 @@ import packageJSON from '../package.json' assert { type: 'json' };
 import { configCommand } from './commands/config';
 import { hookCommand, isHookCalled } from './commands/githook.js';
 import { prepareCommitMessageHook } from './commands/prepare-commit-msg-hook';
-import { commit } from './commands/commit';
+import { copyMessageToClipboard } from './commands/commit';
 // import { checkIsLatestVersion } from './utils/checkIsLatestVersion';
 
 const extraArgs = process.argv.slice(2);
@@ -26,7 +26,7 @@ cli(
     if (await isHookCalled()) {
       prepareCommitMessageHook();
     } else {
-      commit(extraArgs);
+      copyMessageToClipboard();
     }
   },
   extraArgs
