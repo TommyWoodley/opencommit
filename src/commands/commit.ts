@@ -2,6 +2,7 @@ import {
   GenerateCommitMessageErrorEnum,
   generateCommitMessageWithChatCompletion
 } from '../generateCommitMessageFromGitDiff';
+import { spawn } from "child_process";
 import {
   assertGitRepo,
   getChangedFiles,
@@ -19,6 +20,11 @@ import {
 } from '@clack/prompts';
 import chalk from 'chalk';
 import { trytm } from '../utils/trytm';
+
+function pbcopy(data: string) {
+  let proc = spawn('pbcopy');
+  proc.stdin.write(data); proc.stdin.end();
+}
 
 const generateCommitMessageFromGitDiff = async (
   diff: string
@@ -48,7 +54,7 @@ ${commitMessage}
 ${chalk.grey('——————————————————')}`
   );
 
-  //here
+  pbcopy(commitMessage);
 };
 
 export async function commit(
